@@ -51,7 +51,7 @@ int get_random_number(int N) // Генератор случайных чисел
 
 int main()
 {
-    int A[1000000] = {0}, N = 100, t, i=0; // Ищем случайное число
+    int A[1000000] = {0}, N = 10000, t=0, i=0, j=0; // Ищем случайное число
     while (i<1000000)
     {
         A[i]=i+1;
@@ -67,30 +67,39 @@ int main()
     
     // Счётчик для прямого поиска
     while (N <= 1000000)
-    {
-        begin = std::chrono::steady_clock::now();
-        straight(A, N, get_random_number(N));
-        end = std::chrono::steady_clock ::now();
-        time_span = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
-        t=time_span.count();
-        sfr << t << "\n";
-        std::cout << t << "\r";
-        N = N + 1;
+    {   while (j<100)
+        {
+            j=j+1;
+            begin = std::chrono::steady_clock::now();
+            straight(A, N, get_random_number(1000000));
+            end = std::chrono::steady_clock ::now();
+            time_span = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
+            t=time_span.count()+t;
+        }
+        sfr << t/100 << "\n";
+        std::cout << t/100 << "\r";
+        j=0;
+        N = N + 10000;
+        t=0;
     }
 
-
+    N=100;
     // Для бинарного поиска
-    N = 100;
     while (N <= 1000000)
-    {
-        begin = std::chrono::steady_clock::now();
-        binary(A, N, get_random_number(N));
-        end = std::chrono::steady_clock ::now();
-        time_span = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
-        t=time_span.count();
-        bfr<<t <<"\n";
-        std::cout << t << "\r";
-        N = N + 1;
+    {   while (j<100)
+        {
+            j=j+1;
+            begin = std::chrono::steady_clock::now();
+            binary(A, N, get_random_number(1000000));
+            end = std::chrono::steady_clock ::now();
+            time_span = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
+            t=time_span.count()+t;
+        }
+        bfr << t/100 << "\n";
+        std::cout << t/100 << "\r";
+        j=0;
+        N = N + 10000;
+        t=0;
     }
     sfr.close();
     bfr.close();

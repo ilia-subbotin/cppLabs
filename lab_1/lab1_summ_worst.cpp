@@ -55,10 +55,10 @@ int get_random_number(int N) // Генератор случайных чисел
 
 int main()
 {
-    int A[10000] = {0}, N = 100, t, i = 0; // В этой задаче важно для прямого поиска использовать массив из случайных чисел
+    int A[10000] = {0}, N = 100, t, i = 0, j=0; // В этой задаче важно для прямого поиска использовать массив из случайных чисел
     while (i < 10000)                      // В задании не указан размер массива, поэтому уменьшим максимальный размер, чтобы программа завершилась быстрее
     {
-        A[i] = get_random_number(100000);
+        A[i] = i+1;
         i = i + 1;
     }
     std::ofstream ssfw,epfw; // Здесь храним данные
@@ -71,29 +71,41 @@ int main()
     // Счётчик для прямого поиска
     while (N <= 10000)
     {
-        begin = std::chrono::steady_clock::now();
-        straight_sum(A, N, 0); // Ищем 0, его точно не найдём
-        end = std::chrono::steady_clock ::now();
-        time_span = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
-        t = time_span.count();
-        ssfw << t << "\n";
-        std::cout << t << "\r";
-        N = N + 1;
+        while (j<2)
+        {
+            j=j+1;
+            begin = std::chrono::steady_clock::now();
+            straight_sum(A, N, 0);
+            end = std::chrono::steady_clock ::now();
+            time_span = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
+            t=time_span.count()+t;
+        }
+        ssfw << t/2 << "\n";
+        std::cout << t/2 << "\r";
+        N = N + 100;
+        j=0;
+        t=0;
     }
 
-    std::sort(A, A + N); // Сортируем массив
+    //std::sort(A, A + N); // Сортируем массив
     // Для бинарного поиска
     N = 100;
     while (N <= 10000)
     {
-        begin = std::chrono::steady_clock::now();
-        eff_pair(A, N, 0); // Ищем 0, его точно не найдём
-        end = std::chrono::steady_clock ::now();
-        time_span = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
-        t = time_span.count();
-        epfw << t << "\n";
-        std::cout << t << "\r";
-        N = N + 1;
+        while (j<2)
+        {
+            j=j+1;
+            begin = std::chrono::steady_clock::now();
+            eff_pair(A, N, 0);
+            end = std::chrono::steady_clock ::now();
+            time_span = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
+            t=time_span.count()+t;
+        }
+        epfw << t/2 << "\n";
+        std::cout << t/2 << "\r";
+        N = N + 100;
+        j=0;
+        t=0;
     }
     ssfw.close();
     epfw.close();

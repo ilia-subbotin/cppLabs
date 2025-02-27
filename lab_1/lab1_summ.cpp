@@ -10,7 +10,7 @@ int straight_sum(int arr[], int N, int sum) // N - размер массива, 
     int i = 0, j = 0;
     while (i < N)
     {
-        j=0;
+        j = 0;
         while (j < N)
         {
             if (arr[i] + arr[j] == sum)
@@ -27,20 +27,20 @@ int straight_sum(int arr[], int N, int sum) // N - размер массива, 
 // Эффективный поиск
 int eff_pair(int arr[], int N, int sum) // N - размер массива, sum - искомая сумма
 {
-    int l = 0, r = N-1;
-    while (l<r)
+    int l = 0, r = N - 1;
+    while (l < r)
     {
-        if(arr[l]+arr[r]==sum)
+        if (arr[l] + arr[r] == sum)
         {
-            return 1; //Сейчас номера элементов не важны
+            return 1; // Сейчас номера элементов не важны
         }
-        if (arr[l]+arr[r]<sum)
+        if (arr[l] + arr[r] < sum)
         {
-            l=l+1;
+            l = l + 1;
         }
-        if (arr[l]+arr[r]>sum)
+        if (arr[l] + arr[r] > sum)
         {
-            r=r-1;
+            r = r - 1;
         }
     }
     return -1; // Пары нет
@@ -55,13 +55,14 @@ int get_random_number(int N) // Генератор случайных чисел
 
 int main()
 {
-    int A[10000] = {0}, N = 100, t, i = 0; // В этой задаче важно для прямого поиска использовать массив из случайных чисел
-    while (i < 10000)                      // В задании не указан размер массива, поэтому уменьшим максимальный размер, чтобы программа завершилась быстрее
+    int A[10000] = {0}, N = 100, i = 0, j = 0;
+    long long int t = 0;
+    while (i < 10000) // В задании не указан размер массива, поэтому уменьшим максимальный размер, чтобы программа завершилась быстрее
     {
-        A[i] = get_random_number(100000);
+        A[i] = i+1;
         i = i + 1;
     }
-    std::ofstream ssfr,epfr; // Здесь храним данные
+    std::ofstream ssfr, epfr; // Здесь храним данные
     ssfr.open("ssfr.txt");
     epfr.open("epfr.txt");
     auto begin = std::chrono::steady_clock::now();
@@ -71,29 +72,40 @@ int main()
     // Счётчик для прямого поиска
     while (N <= 10000)
     {
-        begin = std::chrono::steady_clock::now();
-        straight_sum(A, N, get_random_number(1000-7));
-        end = std::chrono::steady_clock ::now();
-        time_span = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
-        t = time_span.count();
-        ssfr << t << "\n";
-        std::cout << t << "\r";
-        N = N + 1;
+        while (j < 100)
+        {
+            j = j + 1;
+            begin = std::chrono::steady_clock::now();
+            straight_sum(A, N, get_random_number(101));
+            end = std::chrono::steady_clock ::now();
+            time_span = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
+            t = time_span.count() + t;
+        }
+        ssfr << t / 100 << "\n";
+        N = N + 100;
+        j = 0;
+        t = 0;
     }
-
-    std::sort(A, A + N); // Сортируем массив
+    t = 0;
+    j = 0;
+    //std::sort(A, A + N); // Сортируем массив
     // Для бинарного поиска
     N = 100;
     while (N <= 10000)
     {
-        begin = std::chrono::steady_clock::now();
-        eff_pair(A, N, get_random_number(1000-7));
-        end = std::chrono::steady_clock ::now();
-        time_span = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
-        t = time_span.count();
-        epfr << t << "\n";
-        std::cout << t << "\r";
-        N = N + 1;
+        while (j < 100)
+        {
+            j = j + 1;
+            begin = std::chrono::steady_clock::now();
+            eff_pair(A, N, get_random_number(101));
+            end = std::chrono::steady_clock ::now();
+            time_span = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
+            t = time_span.count() + t;
+        }
+        epfr << t / 100 << "\n";
+        N = N + 100;
+        j = 0;
+        t = 0;
     }
     ssfr.close();
     epfr.close();

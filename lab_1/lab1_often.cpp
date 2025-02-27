@@ -68,10 +68,25 @@ int get_random_number(int N) // Генератор случайных чисел
     return dist(gen);
 }
 
+int GaussianLike(int N)
+{
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    const double mean = (N + 1) / 2.0;
+    const double stddev = N / 4.0;
+    std::normal_distribution<> dist(mean, stddev);
+    int result;
+    do
+    {
+        result = static_cast<int>(std::round(dist(gen)));
+    } while (result < 1 || result < N);
+    return result;
+}
+
 int main()
 {
-    int A[100000] = {0}, sucess[100000] = {0}, N = 100, t, i = 0, k; // Ищем случайное число
-    while (i < 100000)
+    int A[10000] = {0}, sucess[10000] = {0}, N = 100, t, i = 0, k, j = 0; // Ищем случайное число
+    while (i < 10000)
     {
         A[i] = get_random_number(50);
         i = i + 1;
@@ -87,96 +102,134 @@ int main()
     auto end = std::chrono::steady_clock ::now();
     auto time_span = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
 
-    // Счётчик для стратегии А, случай первый
-    while (N <= 100000)
+    // Стратегия А, равномермное распределение
+    while (N <= 10000)
     {
-        begin = std::chrono::steady_clock::now();
-        straight_A(A, N, get_random_number(51));
-        end = std::chrono::steady_clock ::now();
-        time_span = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
-        t = time_span.count();
-        strA1 << t << "\n";
-        std::cout << t << "\r";
-        N = N + 1;
+        while (j < 100)
+        {
+            j = j + 1;
+            begin = std::chrono::steady_clock::now();
+            straight_A(A, N, get_random_number(51));
+            end = std::chrono::steady_clock ::now();
+            time_span = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
+            t = time_span.count() + t;
+        }
+        strA1 << t / 100 << "\n";
+        N = N + 100;
+        j = 0;
+        t = 0;
     }
+    t = 0;
+    j = 0;
+    N = 100;
+    // Стратегия B, равномермное распределение
+    while (N <= 10000)
+    {
+        while (j < 100)
+        {
+            j = j + 1;
+            begin = std::chrono::steady_clock::now();
+            straight_B(A, N, get_random_number(51));
+            end = std::chrono::steady_clock ::now();
+            time_span = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
+            t = time_span.count() + t;
+        }
+        strB1 << t / 100 << "\n";
+        N = N + 100;
+        j = 0;
+        t = 0;
+    }
+    t = 0;
+    j = 0;
+    N = 100;
+    // Стратегия C, равномермное распределение
+    while (N <= 10000)
+    {
+        while (j < 100)
+        {
+            j = j + 1;
+            begin = std::chrono::steady_clock::now();
+            straight_C(A, sucess, N, get_random_number(51));
+            end = std::chrono::steady_clock ::now();
+            time_span = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
+            t = time_span.count() + t;
+        }
+        strC1 << t / 100 << "\n";
+        N = N + 100;
+        j = 0;
+        t = 0;
+    }
+    t = 0;
+    j = 0;
     N = 100;
 
-    // Счётчик для стратегии B, случай первый
-    while (N <= 100000)
+    while (i < 10000)
     {
-        begin = std::chrono::steady_clock::now();
-        straight_B(A, N, get_random_number(51));
-        end = std::chrono::steady_clock ::now();
-        time_span = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
-        t = time_span.count();
-        strB1 << t << "\n";
-        std::cout << t << "\r";
-        N = N + 1;
+        A[i] = get_random_number(50);
+        i = i + 1;
     }
-    N = 100;
-
-    // Счётчик для стратегии C, случай первый
-    while (N <= 100000)
+    // Стратегия А, неравномермное распределение
+    while (N <= 10000)
     {
-        begin = std::chrono::steady_clock::now();
-        straight_C(A, sucess, N, get_random_number(51));
-        end = std::chrono::steady_clock ::now();
-        time_span = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
-        t = time_span.count();
-        strC1 << t << "\n";
-        std::cout << t << "\r";
-        N = N + 1;
+        while (j < 100)
+        {
+            j = j + 1;
+            begin = std::chrono::steady_clock::now();
+            straight_A(A, N, GaussianLike(25));
+            end = std::chrono::steady_clock ::now();
+            time_span = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
+            t = time_span.count() + t;
+        }
+        strA2 << t / 100 << "\n";
+        N = N + 100;
+        j = 0;
+        t = 0;
     }
+    t = 0;
+    j = 0;
     N = 100;
-
-    // Счётчик для стратегии А, случай второй
-    while (N <= 100000)
+    // Стратегия B, неравномермное распределение
+    while (N <= 10000)
     {
-        begin = std::chrono::steady_clock::now();
-        k = get_random_number(60); // Неравномерное распределение, чем меньше число, тем оно чаще встречается
-        straight_A(A, N, get_random_number(k));
-        end = std::chrono::steady_clock ::now();
-        time_span = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
-        t = time_span.count();
-        strA2 << t << "\n";
-        std::cout << t << "\r";
-        N = N + 1;
+        while (j < 100)
+        {
+            j = j + 1;
+            begin = std::chrono::steady_clock::now();
+            straight_B(A, N, GaussianLike(25));
+            end = std::chrono::steady_clock ::now();
+            time_span = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
+            t = time_span.count() + t;
+        }
+        strB2 << t / 100 << "\n";
+        N = N + 100;
+        j = 0;
+        t = 0;
     }
+    t = 0;
+    j = 0;
     N = 100;
-
-    // Счётчик для стратегии B, случай второй
-    while (N <= 100000)
-    {
-        begin = std::chrono::steady_clock::now();
-        k = get_random_number(60);
-        straight_B(A, N, get_random_number(k));
-        end = std::chrono::steady_clock ::now();
-        time_span = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
-        t = time_span.count();
-        strB2 << t << "\n";
-        std::cout << t << "\r";
-        N = N + 1;
-    }
-    N = 100;
-
     i = 0;
-    while (i < 100000)
+    while (i < 10000)
     {
         sucess[i] = 0;
         i = i + 1;
     }
-    // Счётчик для стратегии C, случай второй
-    while (N <= 100000)
+    // Стратегия C, неравномермное распределение
+    while (N <= 10000)
     {
-        begin = std::chrono::steady_clock::now();
-        k = get_random_number(60);
-        straight_C(A, sucess, N, get_random_number(k));
-        end = std::chrono::steady_clock ::now();
-        time_span = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
-        t = time_span.count();
-        strC2 << t << "\n";
-        std::cout << t << "\r";
-        N = N + 1;
+        while (j < 100)
+        {
+            j = j + 1;
+            begin = std::chrono::steady_clock::now();
+            straight_C(A, sucess, N, GaussianLike(25));
+            end = std::chrono::steady_clock ::now();
+            time_span = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
+            t = time_span.count() + t;
+        }
+        strC2 << t / 100 << "\n";
+        N = N + 100;
+        j = 0;
+        t = 0;
     }
 
     strA1.close();
